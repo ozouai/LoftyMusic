@@ -36,6 +36,7 @@ RUN npm install -g yarn
 WORKDIR /usr/local
 RUN wget -q -c https://github.com/protocolbuffers/protobuf/releases/download/v3.15.8/protoc-3.15.8-linux-x86_64.zip -O /tmp/protoc.zip
 RUN unzip /tmp/protoc.zip
+RUN chmod +x /usr/local/bin/protoc
 RUN protoc --version
 WORKDIR /
 USER gitpod
