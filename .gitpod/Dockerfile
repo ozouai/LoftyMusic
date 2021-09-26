@@ -42,10 +42,12 @@ USER gitpod
 ENV HOME="/home/gitpod"
 RUN sudo chown -R gitpod:gitpod /home/gitpod
 USER gitpod
+ENV PATH="${PATH}:/home/gitpod/go/bin"
 RUN go get -v golang.org/x/tools/gopls
 RUN go get -v github.com/uudashr/gopkgs/v2/cmd/gopkgs
 RUN go get -v github.com/ramya-rao-a/go-outline
 RUN go get -v github.com/go-delve/delve/cmd/dlv
 RUN go get -v github.com/go-delve/delve/cmd/dlv@master
 RUN go get -v honnef.co/go/tools/cmd/staticcheck
-RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
