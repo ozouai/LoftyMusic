@@ -1,36 +1,37 @@
 syntax = "proto3";
 
-option go_pkg = "github.com/ozouai/loftymusic/audiosource/audiosourcepb;audiosourcepb";
+option go_package = "github.com/ozouai/loftymusic/audiosource/audiosourcepb;audiosourcepb";
 
 service AudioSource {
-    rpc Register(RegisterRequest) (RegisterResponse);
-}
-
-service AudioSourceService {
-    rpc Search(SearchRequest) (SearchResponse);
-    rpc Stream(StreamRequest) (stream StreamPacket);
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc ControlChannel(stream ControlChannelRequest) returns (stream ControlChannelResponse);
 }
 
 message RegisterRequest {
-    string source_name = 1;
+    string source_type = 1;
 }
 
 message RegisterResponse {
-
+    string app_id = 1;
 }
 
-message SearchRequest {
-    string term = 1;
+message ControlChannelRequest {
+    oneof request {
+        Search.Request search = 1;
+    }
 }
 
-message SearchResponse {
-    string id = 1;
+message ControlChannelResponse {
+    oneof request {
+        Search.Response search = 1;
+    }
 }
 
-message StreamRequest {
-    string id = 1;
-}
-
-message StreamPacket {
-    bytes frame = 1;
+message Search {
+    message Request {
+        string term = 1;
+    }
+    message Response {
+        string id = 1;
+    }
 }
