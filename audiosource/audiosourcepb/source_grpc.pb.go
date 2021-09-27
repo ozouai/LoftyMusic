@@ -18,7 +18,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AudioSourceClient interface {
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	ControlChannel(ctx context.Context, opts ...grpc.CallOption) (AudioSource_ControlChannelClient, error)
 }
 
@@ -28,15 +27,6 @@ type audioSourceClient struct {
 
 func NewAudioSourceClient(cc grpc.ClientConnInterface) AudioSourceClient {
 	return &audioSourceClient{cc}
-}
-
-func (c *audioSourceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
-	out := new(RegisterResponse)
-	err := c.cc.Invoke(ctx, "/AudioSource/Register", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *audioSourceClient) ControlChannel(ctx context.Context, opts ...grpc.CallOption) (AudioSource_ControlChannelClient, error) {
@@ -49,8 +39,8 @@ func (c *audioSourceClient) ControlChannel(ctx context.Context, opts ...grpc.Cal
 }
 
 type AudioSource_ControlChannelClient interface {
-	Send(*ControlChannelRequest) error
-	Recv() (*ControlChannelResponse, error)
+	Send(*ControlChannelResponse) error
+	Recv() (*ControlChannelRequest, error)
 	grpc.ClientStream
 }
 
@@ -58,12 +48,12 @@ type audioSourceControlChannelClient struct {
 	grpc.ClientStream
 }
 
-func (x *audioSourceControlChannelClient) Send(m *ControlChannelRequest) error {
+func (x *audioSourceControlChannelClient) Send(m *ControlChannelResponse) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *audioSourceControlChannelClient) Recv() (*ControlChannelResponse, error) {
-	m := new(ControlChannelResponse)
+func (x *audioSourceControlChannelClient) Recv() (*ControlChannelRequest, error) {
+	m := new(ControlChannelRequest)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -74,7 +64,6 @@ func (x *audioSourceControlChannelClient) Recv() (*ControlChannelResponse, error
 // All implementations must embed UnimplementedAudioSourceServer
 // for forward compatibility
 type AudioSourceServer interface {
-	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	ControlChannel(AudioSource_ControlChannelServer) error
 	mustEmbedUnimplementedAudioSourceServer()
 }
@@ -83,9 +72,6 @@ type AudioSourceServer interface {
 type UnimplementedAudioSourceServer struct {
 }
 
-func (UnimplementedAudioSourceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
-}
 func (UnimplementedAudioSourceServer) ControlChannel(AudioSource_ControlChannelServer) error {
 	return status.Errorf(codes.Unimplemented, "method ControlChannel not implemented")
 }
@@ -102,31 +88,13 @@ func RegisterAudioSourceServer(s grpc.ServiceRegistrar, srv AudioSourceServer) {
 	s.RegisterService(&AudioSource_ServiceDesc, srv)
 }
 
-func _AudioSource_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AudioSourceServer).Register(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/AudioSource/Register",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AudioSourceServer).Register(ctx, req.(*RegisterRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AudioSource_ControlChannel_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(AudioSourceServer).ControlChannel(&audioSourceControlChannelServer{stream})
 }
 
 type AudioSource_ControlChannelServer interface {
-	Send(*ControlChannelResponse) error
-	Recv() (*ControlChannelRequest, error)
+	Send(*ControlChannelRequest) error
+	Recv() (*ControlChannelResponse, error)
 	grpc.ServerStream
 }
 
@@ -134,12 +102,12 @@ type audioSourceControlChannelServer struct {
 	grpc.ServerStream
 }
 
-func (x *audioSourceControlChannelServer) Send(m *ControlChannelResponse) error {
+func (x *audioSourceControlChannelServer) Send(m *ControlChannelRequest) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *audioSourceControlChannelServer) Recv() (*ControlChannelRequest, error) {
-	m := new(ControlChannelRequest)
+func (x *audioSourceControlChannelServer) Recv() (*ControlChannelResponse, error) {
+	m := new(ControlChannelResponse)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -152,12 +120,7 @@ func (x *audioSourceControlChannelServer) Recv() (*ControlChannelRequest, error)
 var AudioSource_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "AudioSource",
 	HandlerType: (*AudioSourceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Register",
-			Handler:    _AudioSource_Register_Handler,
-		},
-	},
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "ControlChannel",

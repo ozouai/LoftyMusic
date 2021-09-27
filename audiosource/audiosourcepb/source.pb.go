@@ -20,106 +20,14 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type RegisterRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	SourceType string `protobuf:"bytes,1,opt,name=source_type,json=sourceType,proto3" json:"source_type,omitempty"`
-}
-
-func (x *RegisterRequest) Reset() {
-	*x = RegisterRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_source_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *RegisterRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterRequest) ProtoMessage() {}
-
-func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_source_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
-func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_source_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *RegisterRequest) GetSourceType() string {
-	if x != nil {
-		return x.SourceType
-	}
-	return ""
-}
-
-type RegisterResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	AppId string `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-}
-
-func (x *RegisterResponse) Reset() {
-	*x = RegisterResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_source_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *RegisterResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterResponse) ProtoMessage() {}
-
-func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_source_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
-func (*RegisterResponse) Descriptor() ([]byte, []int) {
-	return file_source_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *RegisterResponse) GetAppId() string {
-	if x != nil {
-		return x.AppId
-	}
-	return ""
-}
-
 type ControlChannelRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Types that are assignable to Request:
+	//	*ControlChannelRequest_Register
 	//	*ControlChannelRequest_Search
 	Request isControlChannelRequest_Request `protobuf_oneof:"request"`
 }
@@ -127,7 +35,7 @@ type ControlChannelRequest struct {
 func (x *ControlChannelRequest) Reset() {
 	*x = ControlChannelRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_source_proto_msgTypes[2]
+		mi := &file_source_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -140,7 +48,7 @@ func (x *ControlChannelRequest) String() string {
 func (*ControlChannelRequest) ProtoMessage() {}
 
 func (x *ControlChannelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_source_proto_msgTypes[2]
+	mi := &file_source_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -153,12 +61,26 @@ func (x *ControlChannelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ControlChannelRequest.ProtoReflect.Descriptor instead.
 func (*ControlChannelRequest) Descriptor() ([]byte, []int) {
-	return file_source_proto_rawDescGZIP(), []int{2}
+	return file_source_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ControlChannelRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
 }
 
 func (m *ControlChannelRequest) GetRequest() isControlChannelRequest_Request {
 	if m != nil {
 		return m.Request
+	}
+	return nil
+}
+
+func (x *ControlChannelRequest) GetRegister() *Register_Request {
+	if x, ok := x.GetRequest().(*ControlChannelRequest_Register); ok {
+		return x.Register
 	}
 	return nil
 }
@@ -174,9 +96,15 @@ type isControlChannelRequest_Request interface {
 	isControlChannelRequest_Request()
 }
 
-type ControlChannelRequest_Search struct {
-	Search *Search_Request `protobuf:"bytes,1,opt,name=search,proto3,oneof"`
+type ControlChannelRequest_Register struct {
+	Register *Register_Request `protobuf:"bytes,2,opt,name=register,proto3,oneof"`
 }
+
+type ControlChannelRequest_Search struct {
+	Search *Search_Request `protobuf:"bytes,3,opt,name=search,proto3,oneof"`
+}
+
+func (*ControlChannelRequest_Register) isControlChannelRequest_Request() {}
 
 func (*ControlChannelRequest_Search) isControlChannelRequest_Request() {}
 
@@ -185,15 +113,17 @@ type ControlChannelResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Types that are assignable to Request:
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Types that are assignable to Response:
+	//	*ControlChannelResponse_Register
 	//	*ControlChannelResponse_Search
-	Request isControlChannelResponse_Request `protobuf_oneof:"request"`
+	Response isControlChannelResponse_Response `protobuf_oneof:"response"`
 }
 
 func (x *ControlChannelResponse) Reset() {
 	*x = ControlChannelResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_source_proto_msgTypes[3]
+		mi := &file_source_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -206,7 +136,7 @@ func (x *ControlChannelResponse) String() string {
 func (*ControlChannelResponse) ProtoMessage() {}
 
 func (x *ControlChannelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_source_proto_msgTypes[3]
+	mi := &file_source_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -219,32 +149,52 @@ func (x *ControlChannelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ControlChannelResponse.ProtoReflect.Descriptor instead.
 func (*ControlChannelResponse) Descriptor() ([]byte, []int) {
-	return file_source_proto_rawDescGZIP(), []int{3}
+	return file_source_proto_rawDescGZIP(), []int{1}
 }
 
-func (m *ControlChannelResponse) GetRequest() isControlChannelResponse_Request {
+func (x *ControlChannelResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (m *ControlChannelResponse) GetResponse() isControlChannelResponse_Response {
 	if m != nil {
-		return m.Request
+		return m.Response
+	}
+	return nil
+}
+
+func (x *ControlChannelResponse) GetRegister() *Register_Response {
+	if x, ok := x.GetResponse().(*ControlChannelResponse_Register); ok {
+		return x.Register
 	}
 	return nil
 }
 
 func (x *ControlChannelResponse) GetSearch() *Search_Response {
-	if x, ok := x.GetRequest().(*ControlChannelResponse_Search); ok {
+	if x, ok := x.GetResponse().(*ControlChannelResponse_Search); ok {
 		return x.Search
 	}
 	return nil
 }
 
-type isControlChannelResponse_Request interface {
-	isControlChannelResponse_Request()
+type isControlChannelResponse_Response interface {
+	isControlChannelResponse_Response()
+}
+
+type ControlChannelResponse_Register struct {
+	Register *Register_Response `protobuf:"bytes,2,opt,name=register,proto3,oneof"`
 }
 
 type ControlChannelResponse_Search struct {
-	Search *Search_Response `protobuf:"bytes,1,opt,name=search,proto3,oneof"`
+	Search *Search_Response `protobuf:"bytes,3,opt,name=search,proto3,oneof"`
 }
 
-func (*ControlChannelResponse_Search) isControlChannelResponse_Request() {}
+func (*ControlChannelResponse_Register) isControlChannelResponse_Response() {}
+
+func (*ControlChannelResponse_Search) isControlChannelResponse_Response() {}
 
 type Search struct {
 	state         protoimpl.MessageState
@@ -255,7 +205,7 @@ type Search struct {
 func (x *Search) Reset() {
 	*x = Search{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_source_proto_msgTypes[4]
+		mi := &file_source_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -268,7 +218,7 @@ func (x *Search) String() string {
 func (*Search) ProtoMessage() {}
 
 func (x *Search) ProtoReflect() protoreflect.Message {
-	mi := &file_source_proto_msgTypes[4]
+	mi := &file_source_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -281,7 +231,108 @@ func (x *Search) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Search.ProtoReflect.Descriptor instead.
 func (*Search) Descriptor() ([]byte, []int) {
+	return file_source_proto_rawDescGZIP(), []int{2}
+}
+
+type Register struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *Register) Reset() {
+	*x = Register{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_source_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Register) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Register) ProtoMessage() {}
+
+func (x *Register) ProtoReflect() protoreflect.Message {
+	mi := &file_source_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Register.ProtoReflect.Descriptor instead.
+func (*Register) Descriptor() ([]byte, []int) {
+	return file_source_proto_rawDescGZIP(), []int{3}
+}
+
+type AudioMetadata struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id       string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name     string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Duration string `protobuf:"bytes,3,opt,name=duration,proto3" json:"duration,omitempty"`
+}
+
+func (x *AudioMetadata) Reset() {
+	*x = AudioMetadata{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_source_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AudioMetadata) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AudioMetadata) ProtoMessage() {}
+
+func (x *AudioMetadata) ProtoReflect() protoreflect.Message {
+	mi := &file_source_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AudioMetadata.ProtoReflect.Descriptor instead.
+func (*AudioMetadata) Descriptor() ([]byte, []int) {
 	return file_source_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *AudioMetadata) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AudioMetadata) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AudioMetadata) GetDuration() string {
+	if x != nil {
+		return x.Duration
+	}
+	return ""
 }
 
 type Search_Request struct {
@@ -321,7 +372,7 @@ func (x *Search_Request) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Search_Request.ProtoReflect.Descriptor instead.
 func (*Search_Request) Descriptor() ([]byte, []int) {
-	return file_source_proto_rawDescGZIP(), []int{4, 0}
+	return file_source_proto_rawDescGZIP(), []int{2, 0}
 }
 
 func (x *Search_Request) GetTerm() string {
@@ -336,7 +387,10 @@ type Search_Response struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Types that are assignable to Result:
+	//	*Search_Response_Details
+	//	*Search_Response_NotFound
+	Result isSearch_Response_Result `protobuf_oneof:"Result"`
 }
 
 func (x *Search_Response) Reset() {
@@ -368,12 +422,136 @@ func (x *Search_Response) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Search_Response.ProtoReflect.Descriptor instead.
 func (*Search_Response) Descriptor() ([]byte, []int) {
-	return file_source_proto_rawDescGZIP(), []int{4, 1}
+	return file_source_proto_rawDescGZIP(), []int{2, 1}
 }
 
-func (x *Search_Response) GetId() string {
+func (m *Search_Response) GetResult() isSearch_Response_Result {
+	if m != nil {
+		return m.Result
+	}
+	return nil
+}
+
+func (x *Search_Response) GetDetails() *AudioMetadata {
+	if x, ok := x.GetResult().(*Search_Response_Details); ok {
+		return x.Details
+	}
+	return nil
+}
+
+func (x *Search_Response) GetNotFound() string {
+	if x, ok := x.GetResult().(*Search_Response_NotFound); ok {
+		return x.NotFound
+	}
+	return ""
+}
+
+type isSearch_Response_Result interface {
+	isSearch_Response_Result()
+}
+
+type Search_Response_Details struct {
+	Details *AudioMetadata `protobuf:"bytes,1,opt,name=details,proto3,oneof"`
+}
+
+type Search_Response_NotFound struct {
+	NotFound string `protobuf:"bytes,2,opt,name=not_found,json=notFound,proto3,oneof"`
+}
+
+func (*Search_Response_Details) isSearch_Response_Result() {}
+
+func (*Search_Response_NotFound) isSearch_Response_Result() {}
+
+type Register_Request struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+}
+
+func (x *Register_Request) Reset() {
+	*x = Register_Request{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_source_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Register_Request) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Register_Request) ProtoMessage() {}
+
+func (x *Register_Request) ProtoReflect() protoreflect.Message {
+	mi := &file_source_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Register_Request.ProtoReflect.Descriptor instead.
+func (*Register_Request) Descriptor() ([]byte, []int) {
+	return file_source_proto_rawDescGZIP(), []int{3, 0}
+}
+
+func (x *Register_Request) GetUuid() string {
 	if x != nil {
-		return x.Id
+		return x.Uuid
+	}
+	return ""
+}
+
+type Register_Response struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SourceType string `protobuf:"bytes,2,opt,name=source_type,json=sourceType,proto3" json:"source_type,omitempty"`
+}
+
+func (x *Register_Response) Reset() {
+	*x = Register_Response{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_source_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Register_Response) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Register_Response) ProtoMessage() {}
+
+func (x *Register_Response) ProtoReflect() protoreflect.Message {
+	mi := &file_source_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Register_Response.ProtoReflect.Descriptor instead.
+func (*Register_Response) Descriptor() ([]byte, []int) {
+	return file_source_proto_rawDescGZIP(), []int{3, 1}
+}
+
+func (x *Register_Response) GetSourceType() string {
+	if x != nil {
+		return x.SourceType
 	}
 	return ""
 }
@@ -381,41 +559,55 @@ func (x *Search_Response) GetId() string {
 var File_source_proto protoreflect.FileDescriptor
 
 var file_source_proto_rawDesc = []byte{
-	0x0a, 0x0c, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x32,
-	0x0a, 0x0f, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x5f, 0x74, 0x79, 0x70, 0x65,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x54, 0x79,
-	0x70, 0x65, 0x22, 0x29, 0x0a, 0x10, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x15, 0x0a, 0x06, 0x61, 0x70, 0x70, 0x5f, 0x69, 0x64,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x61, 0x70, 0x70, 0x49, 0x64, 0x22, 0x4d, 0x0a,
-	0x15, 0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x29, 0x0a, 0x06, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x2e,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x48, 0x00, 0x52, 0x06, 0x73, 0x65, 0x61, 0x72, 0x63,
-	0x68, 0x42, 0x09, 0x0a, 0x07, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x4f, 0x0a, 0x16,
-	0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2a, 0x0a, 0x06, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x2e,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x48, 0x00, 0x52, 0x06, 0x73, 0x65, 0x61, 0x72,
-	0x63, 0x68, 0x42, 0x09, 0x0a, 0x07, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x43, 0x0a,
-	0x06, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x1a, 0x1d, 0x0a, 0x07, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x65, 0x72, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x04, 0x74, 0x65, 0x72, 0x6d, 0x1a, 0x1a, 0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02,
-	0x69, 0x64, 0x32, 0x85, 0x01, 0x0a, 0x0b, 0x41, 0x75, 0x64, 0x69, 0x6f, 0x53, 0x6f, 0x75, 0x72,
-	0x63, 0x65, 0x12, 0x2f, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x10,
-	0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x11, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x12, 0x45, 0x0a, 0x0e, 0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x43, 0x68,
-	0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x12, 0x16, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x43,
-	0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e,
-	0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x28, 0x01, 0x30, 0x01, 0x42, 0x46, 0x5a, 0x44, 0x67, 0x69,
-	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6f, 0x7a, 0x6f, 0x75, 0x61, 0x69, 0x2f,
-	0x6c, 0x6f, 0x66, 0x74, 0x79, 0x6d, 0x75, 0x73, 0x69, 0x63, 0x2f, 0x61, 0x75, 0x64, 0x69, 0x6f,
-	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2f, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x73, 0x6f, 0x75, 0x72,
-	0x63, 0x65, 0x70, 0x62, 0x3b, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
-	0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x0a, 0x0c, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x8e,
+	0x01, 0x0a, 0x15, 0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65,
+	0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x2f, 0x0a, 0x08, 0x72, 0x65, 0x67, 0x69,
+	0x73, 0x74, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x11, 0x2e, 0x52, 0x65, 0x67,
+	0x69, 0x73, 0x74, 0x65, 0x72, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x48, 0x00, 0x52,
+	0x08, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x29, 0x0a, 0x06, 0x73, 0x65, 0x61,
+	0x72, 0x63, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x53, 0x65, 0x61, 0x72,
+	0x63, 0x68, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x48, 0x00, 0x52, 0x06, 0x73, 0x65,
+	0x61, 0x72, 0x63, 0x68, 0x42, 0x09, 0x0a, 0x07, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22,
+	0x92, 0x01, 0x0a, 0x16, 0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x43, 0x68, 0x61, 0x6e, 0x6e,
+	0x65, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x30, 0x0a, 0x08, 0x72, 0x65,
+	0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x52,
+	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x48, 0x00, 0x52, 0x08, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x2a, 0x0a, 0x06,
+	0x73, 0x65, 0x61, 0x72, 0x63, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x53,
+	0x65, 0x61, 0x72, 0x63, 0x68, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x48, 0x00,
+	0x52, 0x06, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68, 0x42, 0x0a, 0x0a, 0x08, 0x72, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x88, 0x01, 0x0a, 0x06, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x1a,
+	0x1d, 0x0a, 0x07, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x65,
+	0x72, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x65, 0x72, 0x6d, 0x1a, 0x5f,
+	0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2a, 0x0a, 0x07, 0x64, 0x65,
+	0x74, 0x61, 0x69, 0x6c, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x41, 0x75,
+	0x64, 0x69, 0x6f, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x48, 0x00, 0x52, 0x07, 0x64,
+	0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x12, 0x1d, 0x0a, 0x09, 0x6e, 0x6f, 0x74, 0x5f, 0x66, 0x6f,
+	0x75, 0x6e, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x08, 0x6e, 0x6f, 0x74,
+	0x46, 0x6f, 0x75, 0x6e, 0x64, 0x42, 0x08, 0x0a, 0x06, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x22,
+	0x56, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x1a, 0x1d, 0x0a, 0x07, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x1a, 0x2b, 0x0a, 0x08, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
+	0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x54, 0x79, 0x70, 0x65, 0x22, 0x4f, 0x0a, 0x0d, 0x41, 0x75, 0x64, 0x69, 0x6f,
+	0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08,
+	0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x54, 0x0a, 0x0b, 0x41, 0x75, 0x64, 0x69,
+	0x6f, 0x53, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x45, 0x0a, 0x0e, 0x43, 0x6f, 0x6e, 0x74, 0x72,
+	0x6f, 0x6c, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x12, 0x17, 0x2e, 0x43, 0x6f, 0x6e, 0x74,
+	0x72, 0x6f, 0x6c, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x1a, 0x16, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x72, 0x6f, 0x6c, 0x43, 0x68, 0x61, 0x6e,
+	0x6e, 0x65, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x28, 0x01, 0x30, 0x01, 0x42, 0x46,
+	0x5a, 0x44, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6f, 0x7a, 0x6f,
+	0x75, 0x61, 0x69, 0x2f, 0x6c, 0x6f, 0x66, 0x74, 0x79, 0x6d, 0x75, 0x73, 0x69, 0x63, 0x2f, 0x61,
+	0x75, 0x64, 0x69, 0x6f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2f, 0x61, 0x75, 0x64, 0x69, 0x6f,
+	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x70, 0x62, 0x3b, 0x61, 0x75, 0x64, 0x69, 0x6f, 0x73, 0x6f,
+	0x75, 0x72, 0x63, 0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -430,28 +622,31 @@ func file_source_proto_rawDescGZIP() []byte {
 	return file_source_proto_rawDescData
 }
 
-var file_source_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_source_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_source_proto_goTypes = []interface{}{
-	(*RegisterRequest)(nil),        // 0: RegisterRequest
-	(*RegisterResponse)(nil),       // 1: RegisterResponse
-	(*ControlChannelRequest)(nil),  // 2: ControlChannelRequest
-	(*ControlChannelResponse)(nil), // 3: ControlChannelResponse
-	(*Search)(nil),                 // 4: Search
+	(*ControlChannelRequest)(nil),  // 0: ControlChannelRequest
+	(*ControlChannelResponse)(nil), // 1: ControlChannelResponse
+	(*Search)(nil),                 // 2: Search
+	(*Register)(nil),               // 3: Register
+	(*AudioMetadata)(nil),          // 4: AudioMetadata
 	(*Search_Request)(nil),         // 5: Search.Request
 	(*Search_Response)(nil),        // 6: Search.Response
+	(*Register_Request)(nil),       // 7: Register.Request
+	(*Register_Response)(nil),      // 8: Register.Response
 }
 var file_source_proto_depIdxs = []int32{
-	5, // 0: ControlChannelRequest.search:type_name -> Search.Request
-	6, // 1: ControlChannelResponse.search:type_name -> Search.Response
-	0, // 2: AudioSource.Register:input_type -> RegisterRequest
-	2, // 3: AudioSource.ControlChannel:input_type -> ControlChannelRequest
-	1, // 4: AudioSource.Register:output_type -> RegisterResponse
-	3, // 5: AudioSource.ControlChannel:output_type -> ControlChannelResponse
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	7, // 0: ControlChannelRequest.register:type_name -> Register.Request
+	5, // 1: ControlChannelRequest.search:type_name -> Search.Request
+	8, // 2: ControlChannelResponse.register:type_name -> Register.Response
+	6, // 3: ControlChannelResponse.search:type_name -> Search.Response
+	4, // 4: Search.Response.details:type_name -> AudioMetadata
+	1, // 5: AudioSource.ControlChannel:input_type -> ControlChannelResponse
+	0, // 6: AudioSource.ControlChannel:output_type -> ControlChannelRequest
+	6, // [6:7] is the sub-list for method output_type
+	5, // [5:6] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_source_proto_init() }
@@ -461,30 +656,6 @@ func file_source_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_source_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_source_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_source_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ControlChannelRequest); i {
 			case 0:
 				return &v.state
@@ -496,7 +667,7 @@ func file_source_proto_init() {
 				return nil
 			}
 		}
-		file_source_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_source_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ControlChannelResponse); i {
 			case 0:
 				return &v.state
@@ -508,8 +679,32 @@ func file_source_proto_init() {
 				return nil
 			}
 		}
-		file_source_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_source_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Search); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_source_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Register); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_source_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AudioMetadata); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -544,12 +739,42 @@ func file_source_proto_init() {
 				return nil
 			}
 		}
+		file_source_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Register_Request); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_source_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Register_Response); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
-	file_source_proto_msgTypes[2].OneofWrappers = []interface{}{
+	file_source_proto_msgTypes[0].OneofWrappers = []interface{}{
+		(*ControlChannelRequest_Register)(nil),
 		(*ControlChannelRequest_Search)(nil),
 	}
-	file_source_proto_msgTypes[3].OneofWrappers = []interface{}{
+	file_source_proto_msgTypes[1].OneofWrappers = []interface{}{
+		(*ControlChannelResponse_Register)(nil),
 		(*ControlChannelResponse_Search)(nil),
+	}
+	file_source_proto_msgTypes[6].OneofWrappers = []interface{}{
+		(*Search_Response_Details)(nil),
+		(*Search_Response_NotFound)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -557,7 +782,7 @@ func file_source_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_source_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
